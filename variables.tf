@@ -1,21 +1,12 @@
-variable "region" {
-}
+variable "name" {}
 
-variable "name" {
-}
+variable "environment" {}
 
-variable "owner" {
-}
+variable "remote_state_bucket" {}
 
-variable "environment" {
-}
-
-variable "remote_state_bucket" {
-}
-
-variable "tags" {
-  type = "map"
-}
+//variable "tags" {
+//  type = "map"
+//}
 
 variable "subnet_ids" {
   type = "list"
