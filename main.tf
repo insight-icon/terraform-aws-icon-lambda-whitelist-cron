@@ -133,7 +133,7 @@ data "archive_file" "lambda_zip" {
   }
 
   source {
-    content  = file("${path.module}/terraform")
+    content  = filemd5("${path.module}/terraform")
     filename = "terraform"
   }
 }
