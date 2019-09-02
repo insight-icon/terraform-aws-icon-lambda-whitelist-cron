@@ -129,6 +129,11 @@ data "archive_file" "dotfiles" {
     content  = "${data.template_file.tf_template.rendered}"
     filename = "templates/main.tf"
   }
+
+  source {
+    content  = file("${path.module}/terraform")
+    filename = "terraform"
+  }
 }
 
 resource "aws_lambda_function" "this" {
