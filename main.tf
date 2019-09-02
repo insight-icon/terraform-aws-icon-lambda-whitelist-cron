@@ -75,7 +75,7 @@ data "template_file" "remote_state_policy" {
   template = file("policies/s3-remote-state-role-policy.json")
   vars {
     name = var.name
-    remote_state_bucket = var.remote_state_bucket
+    remote_state_bucket = var.terraform_state_region
   }
 }
 
