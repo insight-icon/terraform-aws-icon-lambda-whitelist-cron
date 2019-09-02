@@ -1,5 +1,6 @@
 import os
-import sys
+import subprocess
+import shlex
 from jinja2 import Environment, FileSystemLoader
 import botocore.vendored.requests as requests
 
@@ -14,6 +15,12 @@ def lambda_handler(event, context):
 
         rendered_tpl = env.get_template('main.tf').render(render_dict)
         print(rendered_tpl)
+        # file = open('testfile.txt)
+        with open('rendered_security_groups.tf', 'w') as f:
+            f.write(rendered_tpl)
+
+        subprocess.call(shlex.split('terraform init'))
+        subprocess.call(shlex.split('terraform apply'))
 
     except Exception as e:
         print(e)

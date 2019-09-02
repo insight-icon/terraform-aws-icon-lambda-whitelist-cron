@@ -1,6 +1,5 @@
 variable "name" {}
 variable "group" {}
-
 variable "environment" {}
 
 variable "terraform_state_bucket" {}

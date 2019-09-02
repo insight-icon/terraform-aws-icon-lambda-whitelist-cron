@@ -113,6 +113,8 @@ data template_file "tf_template" {
   vars = {
     name = var.name
     group = var.group
+    aws_region = data.aws_region.this.name
+    remote_state_bucket = var.terraform_state_bucket
   }
 }
 
