@@ -108,12 +108,11 @@ data template_file "lambda_function" {
   template = file("${path.module}/lambda_function.py")
 }
 
-
 data template_file "tf_template" {
   template = file("${path.module}/templates/main.tf")
   vars = {
     name = var.name
-    account_id = data.aws_caller_identity.this.account_id
+    group = var.group
   }
 }
 
@@ -123,12 +122,12 @@ data "archive_file" "dotfiles" {
 
   source {
     content  = "${data.template_file.lambda_function.rendered}"
-    filename = ".vimrc"
+    filename = "lambda_function.py"
   }
 
   source {
     content  = "${data.template_file.tf_template.rendered}"
-    filename = ".ssh/config"
+    filename = "templates/main.tf"
   }
 }
 
