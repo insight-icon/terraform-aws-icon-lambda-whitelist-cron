@@ -11,7 +11,7 @@ def lambda_handler(event, context):
         templates_dir = os.path.join(os.path.curdir, 'templates')
         os.listdir(templates_dir)
         env = Environment(loader=FileSystemLoader(templates_dir))
-        render_dict = {'ip_list': json_whitelist.json(), 'group': 'p-rep'}
+        render_dict = {'ip_list': json_whitelist.json()}
 
         rendered_tpl = env.get_template('main.tf').render(render_dict)
         print(rendered_tpl)
