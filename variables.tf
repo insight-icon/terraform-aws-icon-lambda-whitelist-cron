@@ -2,7 +2,7 @@ variable "name" {}
 
 variable "environment" {}
 
-variable "terraform_state_region" {}
+variable "terraform_state_bucket" {}
 
 //variable "tags" {
 //  type = "map"

@@ -64,18 +64,19 @@ EOF
 }
 
 data "template_file" "cloudwatch_policy" {
-  template = file("policies/lambda-cloudwatch-role-policy.json")
-  vars {
+//  "${file("${path.module}/init.tpl")}"
+  template =  "${file("${path.module}/policies/cloudwatch-role-policy.json")}"
+  vars = {
     name = var.name
     account_id = data.aws_caller_identity.this.account_id
   }
 }
 
-data "template_file" "remote_state_policy" {
-  template = file("policies/s3-remote-state-role-policy.json")
-  vars {
+data "template_file" "s3_remote_state_policy" {
+  template =  file("${path.module}/policies/s3-remote-state-role-policy.json")
+  vars = {
     name = var.name
-    remote_state_bucket = var.terraform_state_region
+    remote_state_bucket = var.terraform_state_bucket
   }
 }
 
@@ -86,7 +87,7 @@ resource "aws_iam_role_policy" "cloudwatch_policy" {
 
 resource "aws_iam_role_policy" "remote_state_policy" {
   role = aws_iam_role.this.id
-  policy = data.template_file.remote_state_policy.rendered
+  policy = data.template_file.s3_remote_state_policy.rendered
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
