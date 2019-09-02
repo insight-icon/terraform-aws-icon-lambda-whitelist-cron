@@ -15,7 +15,7 @@ terraform {
   config {
     bucket = "${terraform_state_bucket}"
     key = "us-east-1/${group}/${name}/terraform.tfstate"
-    region = "${region}"
+    region = "${aws_region}"
   }
 }
 
@@ -24,7 +24,7 @@ data aws_caller_identity "this" {}
 data terraform_remote_state "sg" {
   backend = "s3"
   config {
-    bucket = "terraform-states-${data.aws_caller_identity.this.account_id}"
+    bucket = "terraform-states-$${data.aws_caller_identity.this.account_id}"
     key = "us-east-1/${group}/sg/terraform.tfstate"
     region = "us-east-1"
   }
