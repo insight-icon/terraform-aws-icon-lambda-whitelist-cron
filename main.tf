@@ -113,34 +113,42 @@ data template_file "tf_template" {
   vars = {
     name = var.name
     group = var.group
-    aws_region = "${data.aws_region.this.name}"
+    aws_region = data.aws_region.this.name
     terraform_state_bucket = var.terraform_state_bucket
   }
 }
 
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  output_path = "${path.module}/lambda_function.zip"
-
-  source {
-    content  = "${data.template_file.lambda_function.rendered}"
-    filename = "lambda_function.py"
-  }
-
-  source {
-    content  = "${data.template_file.tf_template.rendered}"
-    filename = "templates/main.tf"
-  }
-
-  source {
-    content  = filemd5("${path.module}/terraform")
-    filename = "terraform"
-  }
-}
+//data "archive_file" "lambda_zip" {
+//  type        = "zip"
+//  output_path = "${path.module}/lambda_function.zip"
+//
+//  source {
+//    content  = data.template_file.lambda_function.rendered
+//    filename = "lambda_function.py"
+//  }
+//
+//  source {
+//    content  = data.template_file.tf_template.rendered
+//    filename = "templates/main.tf"
+//  }
+//
+//  source {
+//    content  = filemd5("${path.module}/terraform")
+//    filename = "terraform"
+//  }
+//
+//  source {
+//    content  = filemd5("${path.module}/jinja.zip")
+//    filename = "jinja.zip"
+//  }
+//}
 
 resource "aws_lambda_function" "this" {
   filename = "lambda_function.zip"
-  source_code_hash = "${data.archive_file.lambda_zip.output_base64sha256}"
+
+  source_code_hash = base64sha256(filemd5("${path.module}/lambda_function.zip"))
+//  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+
   runtime = "python3.6"
   function_name = var.name
   role = aws_iam_role.this.arn

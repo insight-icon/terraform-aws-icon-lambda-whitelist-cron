@@ -26,3 +26,10 @@ P-Rep Node Docker.
 is fed events off of alarms.  This is going to need some planning and testing as it all breaks down to how often the 
 network needs to be adjusted / reconfigured.  
 - Comments welcome at the [ICON Forum](https://forum.icon.community/t/ip-whitelisting-lambda-function/120)
+
+
+## Issues 
+
+- Need NAT to access both VPC resources (ie the security groups we're updating) and the public internet. 
+    - [Source](https://stackoverflow.com/questions/36508974/python-request-in-aws-lambda-timing-out)
+    - Will need to run NAT 

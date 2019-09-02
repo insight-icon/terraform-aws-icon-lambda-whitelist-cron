@@ -18,10 +18,13 @@ def lambda_handler(event, context):
     logger.info(context)
 
     try:
-        json_whitelist = requests.get("https://download.solidwallet.io/conf/prep_iplist.json")
-        print(json_whitelist.json())
+        whitelist_url = r'https://download.solidwallet.io/conf/prep_iplist.json'
+        logger.info('## URL')
+        logger.info(whitelist_url)
+        json_whitelist = requests.get(whitelist_url)
+        logger.info('## JSON')
+        logger.info(json_whitelist.json())
         templates_dir = os.path.join(os.path.curdir, 'templates')
-        os.listdir(templates_dir)
         env = Environment(loader=FileSystemLoader(templates_dir))
         render_dict = {'ip_list': json_whitelist.json()}
 
