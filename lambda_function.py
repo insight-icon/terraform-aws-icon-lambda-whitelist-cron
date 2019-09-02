@@ -1,11 +1,15 @@
+import os
 import sys
-import jinja2
-from botocore.vendored import requests
-
+from jinja2 import Environment, FileSystemLoader
+import botocore.vendored.requests as requests
 
 def lambda_handler(event, context):
     try:
-        json_whitelist = requests("https://download.solidwallet.io/conf/prep_iplist.json")
+        json_whitelist = requests.get("https://download.solidwallet.io/conf/prep_iplist.json")
+        print(json_whitelist.json())
+        templates_dir = os.path.join(os.path.curdir, 'templates')
+        Environment(loader=FileSystemLoader(templates_dir))
+
     except Exception as e:
         print(e)
         raise e

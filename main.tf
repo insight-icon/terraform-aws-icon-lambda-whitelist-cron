@@ -65,7 +65,7 @@ EOF
 
 data "template_file" "cloudwatch_policy" {
 //  "${file("${path.module}/init.tpl")}"
-  template =  "${file("${path.module}/policies/cloudwatch-role-policy.json")}"
+  template =  file("${path.module}/policies/cloudwatch-role-policy.json")
   vars = {
     name = var.name
     account_id = data.aws_caller_identity.this.account_id
@@ -100,9 +100,36 @@ resource "aws_iam_role_policy_attachment" "vpc_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
-
 resource "aws_cloudwatch_log_group" "lambda_cloudwatch_group" {
   name = var.name
+}
+
+data template_file "lambda_function" {
+  template = file("${path.module}/lambda_function.py")
+}
+
+
+data template_file "tf_template" {
+  template = file("${path.module}/templates/main.tf")
+  vars = {
+    name = var.name
+    account_id = data.aws_caller_identity.this.account_id
+  }
+}
+
+data "archive_file" "dotfiles" {
+  type        = "zip"
+  output_path = "${path.module}/lambda_function.zip"
+
+  source {
+    content  = "${data.template_file.lambda_function.rendered}"
+    filename = ".vimrc"
+  }
+
+  source {
+    content  = "${data.template_file.tf_template.rendered}"
+    filename = ".ssh/config"
+  }
 }
 
 resource "aws_lambda_function" "this" {
