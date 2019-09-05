@@ -11,14 +11,29 @@ and the applies those changes to the security groups.
 
 IP List: https://download.solidwallet.io/conf/prep_iplist.json
 
-The JSON file will contain the list of IPs. You should configure your firewalls to allow in/outbound traffic from/to 
-the IP addresses. Following TCP ports should be open.
+## How this code works
 
-- Port 7100: Used by gRPC for peer to peer communication between nodes.
-- Port 9000: Used by JSON-RPC API server.
-
-The IP whitelist will be automatically updated on a daily basis from the endpoint of the seed node inside the 
-P-Rep Node Docker.
+1. Write the lambda function and zip it locally manually
+    - The terraform binary is causing issues with zipping it with terraform functions - commented out 
+    - Could DL it within script
+2. Terraform deploys lambda that runs on cron 
+3. Script reads the ip whitelist from endpoint using botocore requests package 
+    - **There is an error here** 
+    - cloudwatch error
+```
+Starting new HTTPS connection (1): download.solidwallet.io
+```
+   - Assuming we can download this endpoint, we can then do further debugging.  When we have that, we need to then 
+   download the terraform binary as that is what is screwing up the packaging of the zip file with rendering the the 
+   template from within terraform - see commented out archive in `main.tf`.
+    - That is important as the function itself needs input variables supplied by terraform 
+    - Otherwise I need to render a `tfvars` file to import the data from the terraform deployment. 
+    
+4. Jinja needs to be installed this way due to lambda restrictions - check docs 
+5. Jinja then renders template 
+    - **There is an error here** - will address in next couple days but has to do with downloading the 
+6. Run terraform 
+    - We still need to give it a policy to change the security groups 
 
 ## Future Work 
 

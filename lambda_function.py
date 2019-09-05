@@ -4,6 +4,7 @@ import shlex
 from jinja2 import Environment, FileSystemLoader
 import botocore.vendored.requests as requests
 import logging
+import zipfile
 
 
 logger = logging.getLogger()
@@ -18,6 +19,13 @@ def lambda_handler(event, context):
     logger.info(context)
 
     try:
+        # TODO just testing
+        logger.info('Downloading terraform')
+        requests.get('https://releases.hashicorp.com/terraform/0.12.6/terraform_0.12.6_linux_amd64.zip')
+        with zipfile.ZipFile('terraform_0.12.6_linux_amd64.zip', 'r') as zip_ref:
+            zip_ref.extractall('.')
+
+        logger.info('Downloading whitelist')
         whitelist_url = r'https://download.solidwallet.io/conf/prep_iplist.json'
         logger.info('## URL')
         logger.info(whitelist_url)
@@ -39,5 +47,5 @@ def lambda_handler(event, context):
         subprocess.call(shlex.split('terraform apply'))
 
     except Exception as e:
-        print(e)
+        logger.info(e)
         raise e
