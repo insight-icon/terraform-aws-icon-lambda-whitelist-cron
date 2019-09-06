@@ -48,3 +48,7 @@ network needs to be adjusted / reconfigured.
 - Need NAT to access both VPC resources (ie the security groups we're updating) and the public internet. 
     - [Source](https://stackoverflow.com/questions/36508974/python-request-in-aws-lambda-timing-out)
     - Will need to run NAT 
+    
+```
+zip -r9 ${OLDPWD}/function.zip .
+```    
