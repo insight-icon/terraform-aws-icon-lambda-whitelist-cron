@@ -30,13 +30,11 @@ data terraform_remote_state "sg" {
   }
 }
 
-{% for i in ip_list %}
 resource "aws_security_group_rule" "grpc_ingress" {
 type = "ingress"
 security_group_id = data.terraform_remote_state.sg.security_group_id
-cidr_blocks = ["{{ i }}/32"]
+cidr_blocks = [{% for i in ip_list %}"{{ i }}/32"{{ "," if not loop.last }}{% endfor %}]
 from_port = 7100
 to_port = 7100
 protocol = "tcp"
 }
-{% endfor %}
