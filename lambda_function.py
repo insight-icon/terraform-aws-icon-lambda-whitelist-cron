@@ -1,11 +1,9 @@
 import os
 import subprocess
-import shlex
 from jinja2 import Environment, FileSystemLoader
 import botocore.vendored.requests as requests
 import logging
 import zipfile
-
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -19,11 +17,13 @@ def lambda_handler(event, context):
     logger.info(context)
 
     try:
-        # TODO just testing
         logger.info('Downloading terraform')
-        requests.get('https://releases.hashicorp.com/terraform/0.12.6/terraform_0.12.6_linux_amd64.zip')
-        with zipfile.ZipFile('terraform_0.12.6_linux_amd64.zip', 'r') as zip_ref:
-            zip_ref.extractall('.')
+        r=requests.get('https://releases.hashicorp.com/terraform/0.12.6/terraform_0.12.6_linux_amd64.zip')
+        with open('/tmp/terraform_0.12.6_linux_amd64.zip', 'wb') as terrazip:
+          terrazip.write(r.content)
+        print('downloaded')
+        with zipfile.ZipFile('/tmp/terraform_0.12.6_linux_amd64.zip', 'r') as zip_ref:
+            zip_ref.extractall('/tmp/')
 
         logger.info('Downloading whitelist')
         whitelist_url = r'https://download.solidwallet.io/conf/prep_iplist.json'
@@ -39,12 +39,12 @@ def lambda_handler(event, context):
         rendered_tpl = env.get_template('main.tf').render(render_dict)
         logger.info('## RENDERED TF TEMPLATE')
         logger.info(rendered_tpl)
-        # file = open('testfile.txt)
-        with open('rendered_security_groups.tf', 'w') as f:
-            f.write(rendered_tpl)
 
-        subprocess.call(shlex.split('terraform init'))
-        subprocess.call(shlex.split('terraform apply'))
+        with open('/tmp/rendered_security_groups.tf', 'w') as f:
+            f.write(rendered_tpl)
+        os.chmod('/tmp/terraform', 755)
+        subprocess.call(['./terraform', 'init'],cwd='/tmp/')
+        subprocess.call(['./terraform', 'apply', '-auto-approve'],cwd='/tmp/')
 
     except Exception as e:
         logger.info(e)
