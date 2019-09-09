@@ -58,6 +58,8 @@ def lambda_handler(event, context):
         subprocess.call(['./terraform', 'init'], cwd='/tmp/')
         subprocess.call(['./terraform', 'apply', '-auto-approve'], cwd='/tmp/')
 
+        logger.info(subprocess.call(['./terraform', 'output', '-auto-approve'], cwd='/tmp/'))
+
     except Exception as e:
         logger.info(e)
         raise e

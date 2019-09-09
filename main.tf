@@ -104,6 +104,7 @@ resource "aws_cloudwatch_log_group" "lambda_cloudwatch_group" {
   name = var.name
 }
 
+// TODO:  Make packaging of lambda zip inline
 //data template_file "lambda_function" {
 //  template = file("${path.module}/lambda_function.py")
 //}
@@ -183,7 +184,7 @@ resource "aws_lambda_function" "this" {
   handler = "lambda_function.lambda_handler"
 
   timeout = 60
-  memory_size = 256
+  memory_size = 512
 
   vpc_config {
     security_group_ids = var.security_group_ids

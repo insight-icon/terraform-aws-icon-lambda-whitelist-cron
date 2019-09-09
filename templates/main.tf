@@ -13,11 +13,10 @@ provider "aws" {
 }
 
 terraform {
-  backend = "s3"
-  config {
-    bucket = "${var.terraform_state_bucket}"
+  backend "s3" {
+    bucket = var.terraform_state_bucket
     key = "us-east-1/${var.group}/${var.name}/terraform.tfstate"
-    region = "${var.aws_region}"
+    region = var.aws_region
   }
 }
 
@@ -29,7 +28,7 @@ variable "name" {}
 data terraform_remote_state "sg" {
   backend = "s3"
   config {
-    bucket = "terraform-states-$${data.aws_caller_identity.this.account_id}"
+    bucket = "terraform-states-${data.aws_caller_identity.this.account_id}"
     key = "us-east-1/${var.group}/sg/terraform.tfstate"
     region = "us-east-1"
   }
@@ -42,4 +41,8 @@ cidr_blocks = [{% for i in ip_list %}"{{ i }}/32"{{ "," if not loop.last }}{% en
 from_port = 7100
 to_port = 7100
 protocol = "tcp"
+}
+
+output "id" {
+  value = data.terraform_remote_state.sg.outputs
 }
