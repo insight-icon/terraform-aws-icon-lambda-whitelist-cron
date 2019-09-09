@@ -194,9 +194,11 @@ resource "aws_lambda_function" "this" {
   environment {
     variables = {
       TF_VAR_terraform_state_bucket = var.terraform_state_bucket
-      TF_VAR_name = var.name
+      TF_VAR_name = var.sg_name
       TF_VAR_group = var.group
       TF_VAR_aws_region = data.aws_region.this.name
+      TF_VAR_key = var.key
+      TF_VAR_lock_table = var.lock_table
     }
   }
 

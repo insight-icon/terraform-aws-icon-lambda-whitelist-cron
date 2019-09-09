@@ -1,6 +1,9 @@
 variable "name" {}
 variable "group" {}
 variable "environment" {}
+variable "key" {}
+variable "lock_table" {}
+variable "sg_name" {}
 
 variable "terraform_state_bucket" {}
 

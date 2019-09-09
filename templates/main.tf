@@ -14,23 +14,23 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket = var.terraform_state_bucket
-    key = "us-east-1/${var.group}/${var.name}/terraform.tfstate"
-    region = var.aws_region
+//    bucket = var.terraform_state_bucket
+//    key = "us-east-1/${var.group}/${var.name}/terraform.tfstate"
+//    region = var.aws_region
   }
 }
 
 variable "terraform_state_bucket" {}
 variable "group" {}
 variable "aws_region" {}
-variable "name" {}
+variable "sg_name" {}
 
 data terraform_remote_state "sg" {
   backend = "s3"
   config {
     bucket = "terraform-states-${data.aws_caller_identity.this.account_id}"
-    key = "us-east-1/${var.group}/sg/terraform.tfstate"
-    region = "us-east-1"
+    key = "${var.aws_region}/${var.group}/sg/terraform.tfstate"
+    region = var.aws_region
   }
 }
 
