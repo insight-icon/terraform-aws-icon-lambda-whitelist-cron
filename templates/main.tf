@@ -3,7 +3,7 @@ data aws_caller_identity "this" {}
 provider "aws" {
   version = "~> 2.2"
 
-  region = "${var.aws_region}"
+  region = var.aws_region
 
   # Make it faster by skipping some things
   skip_get_ec2_platforms = true
@@ -13,11 +13,7 @@ provider "aws" {
 }
 
 terraform {
-  backend "s3" {
-//    bucket = var.terraform_state_bucket
-//    key = "us-east-1/${var.group}/${var.name}/terraform.tfstate"
-//    region = var.aws_region
-  }
+  backend "s3" {}
 }
 
 variable "terraform_state_bucket" {}
