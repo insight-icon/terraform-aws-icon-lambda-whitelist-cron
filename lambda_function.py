@@ -36,17 +36,17 @@ def lambda_handler(event, context):
         templates_dir = os.path.join(os.path.curdir, 'templates')
         env = Environment(loader=FileSystemLoader(templates_dir))
 
-        terraform_state_bucket = os.environ('terraform_state_bucket')
-        name = os.environ('name')
-        group = os.environ('group')
-        aws_region = os.environ('aws_region')
+        # terraform_state_bucket = os.environ('terraform_state_bucket')
+        # name = os.environ('name')
+        # group = os.environ('group')
+        # aws_region = os.environ('aws_region')
 
-        render_dict = {'ip_list': json_whitelist.json(),
-                       'terraform_state_bucket': terraform_state_bucket,
-                       'name': name,
-                       'group': group,
-                       'aws_region': aws_region
-        }
+        render_dict = {'ip_list': json_whitelist.json()}
+        # ,
+        # 'terraform_state_bucket': terraform_state_bucket,
+        # 'name': name,
+        # 'group': group,
+        # 'aws_region': aws_region
 
         rendered_tpl = env.get_template('main.tf').render(render_dict)
         logger.info('## RENDERED TF TEMPLATE')

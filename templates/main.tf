@@ -1,7 +1,9 @@
+data aws_caller_identity "this" {}
+
 provider "aws" {
   version = "~> 2.2"
 
-  region = "${aws_region}"
+  region = "${var.aws_region}"
 
   # Make it faster by skipping some things
   skip_get_ec2_platforms = true
@@ -13,19 +15,22 @@ provider "aws" {
 terraform {
   backend = "s3"
   config {
-    bucket = "${terraform_state_bucket}"
-    key = "us-east-1/${group}/${name}/terraform.tfstate"
-    region = "${aws_region}"
+    bucket = "${var.terraform_state_bucket}"
+    key = "us-east-1/${var.group}/${var.name}/terraform.tfstate"
+    region = "${var.aws_region}"
   }
 }
 
-data aws_caller_identity "this" {}
+variable "terraform_state_bucket" {}
+variable "group" {}
+variable "aws_region" {}
+variable "name" {}
 
 data terraform_remote_state "sg" {
   backend = "s3"
   config {
     bucket = "terraform-states-$${data.aws_caller_identity.this.account_id}"
-    key = "us-east-1/${group}/sg/terraform.tfstate"
+    key = "us-east-1/${var.group}/sg/terraform.tfstate"
     region = "us-east-1"
   }
 }

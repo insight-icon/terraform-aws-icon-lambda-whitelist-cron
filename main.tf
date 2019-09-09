@@ -142,14 +142,14 @@ resource "aws_cloudwatch_log_group" "lambda_cloudwatch_group" {
 //  depends_on = [data.template_file.lambda_tpl]
 //}
 
-resource "null_resource" "zip" {
-  triggers = {
-    always_run = timestamp()
-  }
-  provisioner "local-exec" {
-    command = "${path.module}/zip-lambda.sh '~/tmp'"
-  }
-}
+//resource "null_resource" "zip" {
+//  triggers = {
+//    always_run = timestamp()
+//  }
+//  provisioner "local-exec" {
+//    command = "${path.module}/zip-lambda.sh"
+//  }
+//}
 
 //data "archive_file" "lambda_zip" {
 //  type        = "zip"
@@ -192,15 +192,15 @@ resource "aws_lambda_function" "this" {
 
   environment {
     variables = {
-      terraform_state_bucket = var.terraform_state_bucket
-      name = var.name
-      group = var.group
-      aws_region = data.aws_region.this.name
+      TF_VAR_terraform_state_bucket = var.terraform_state_bucket
+      TF_VAR_name = var.name
+      TF_VAR_group = var.group
+      TF_VAR_aws_region = data.aws_region.this.name
     }
   }
 
-  depends_on = [
-    null_resource.zip]
+//  depends_on = [
+//    null_resource.zip]
 }
 
 
