@@ -2,20 +2,13 @@
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "AllowAllS3ActionsOnTerragruntBuckets",
       "Effect": "Allow",
-      "Action": [
-        "s3:ListBucket"
-      ],
+      "Action": "s3:*",
       "Resource": [
-        "arn:aws:s3:::${remote_state_bucket}"
+        "arn:aws:s3:::${remote_state_bucket}",
+        "arn:aws:s3:::${remote_state_bucket}/*"
       ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "s3:GetObject"
-      ],
-      "Resource": "arn:aws:s3:::${remote_state_bucket}/*"
     }
   ]
 }

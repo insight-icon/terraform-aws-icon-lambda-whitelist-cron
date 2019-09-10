@@ -52,6 +52,7 @@ def lambda_handler(event, context):
                          '-backend-config "region=$TF_VAR_aws_region"',
                          '-backend-config "key=$TF_VAR_key'
                          ], cwd='/tmp/')
+        # subprocess.call(['./terraform', 'init'], cwd='/tmp/') # This could have been artifact of perms but whatever can't , wait, it can hurt
         subprocess.call(['./terraform', 'apply', '-auto-approve'], cwd='/tmp/')
 
         logger.info(subprocess.call(['./terraform', 'output', '-auto-approve'], cwd='/tmp/'))

@@ -80,6 +80,15 @@ data "template_file" "s3_remote_state_policy" {
   }
 }
 
+data "template_file" "dynamodb_locktable_role_policy" {
+  template = file("${path.module}/policies/dynamodb-locktable-role-policy.json")
+  vars = {
+    name = var.name
+    lock_table = var.lock_table
+    account_id = data.aws_caller_identity.this.account_id
+  }
+}
+
 resource "aws_iam_role_policy" "cloudwatch_policy" {
   role = aws_iam_role.this.id
   policy = data.template_file.cloudwatch_policy.rendered
@@ -89,6 +98,12 @@ resource "aws_iam_role_policy" "remote_state_policy" {
   role = aws_iam_role.this.id
   policy = data.template_file.s3_remote_state_policy.rendered
 }
+
+resource "aws_iam_role_policy" "dynamodb_locktable_role_policy" {
+  role = aws_iam_role.this.id
+  policy = data.template_file.dynamodb_locktable_role_policy.rendered
+}
+
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role = aws_iam_role.this.name
