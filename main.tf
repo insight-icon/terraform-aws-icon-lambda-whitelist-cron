@@ -213,6 +213,8 @@ resource "aws_lambda_function" "this" {
       TF_VAR_group = var.group
       TF_VAR_aws_region = data.aws_region.this.name
       TF_VAR_key = var.key
+      TF_VAR_bucket = var.terraform_state_bucket
+      TF_VAR_region = data.aws_region.this.name
       TF_VAR_lock_table = var.lock_table
     }
   }

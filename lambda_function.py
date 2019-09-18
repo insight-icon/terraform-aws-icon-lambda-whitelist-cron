@@ -47,15 +47,15 @@ def lambda_handler(event, context):
         os.chmod('/tmp/terraform', 755)
         subprocess.call(['./terraform',
                          'init',
-                         '-backend-config "bucket=$TF_VAR_terraform_state_bucket"',
-                         '-backend-config "lock_table=$TF_VAR_lock_table"',
-                         '-backend-config "region=$TF_VAR_aws_region"',
-                         '-backend-config "key=$TF_VAR_key'
+                         '--backend-config "bucket=$TF_VAR_terraform_state_bucket"',
+                         '--backend-config "dynamodb_table=$TF_VAR_lock_table"',
+                         '--backend-config "region=$TF_VAR_aws_region"',
+                         '--backend-config "key=$TF_VAR_key'
                          ], cwd='/tmp/')
         # subprocess.call(['./terraform', 'init'], cwd='/tmp/') # This could have been artifact of perms but whatever can't , wait, it can hurt
-        subprocess.call(['./terraform', 'apply', '-auto-approve'], cwd='/tmp/')
+        subprocess.call(['./terraform', 'apply', '--auto-approve'], cwd='/tmp/')
 
-        logger.info(subprocess.call(['./terraform', 'output', '-auto-approve'], cwd='/tmp/'))
+        logger.info(subprocess.call(['./terraform', 'output', '--auto-approve'], cwd='/tmp/'))
 
     except Exception as e:
         logger.info(e)
