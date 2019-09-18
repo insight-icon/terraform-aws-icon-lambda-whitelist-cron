@@ -8,3 +8,6 @@
 .terraform/
 
 Pipfile*
+
+*terraform.tfstate
+*terraform.tfstate.backup
