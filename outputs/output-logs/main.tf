@@ -12,6 +12,10 @@ provider "aws" {
   skip_requesting_account_id = true
 }
 
+terraform {
+  backend "s3" {}
+}
+
 variable "group" {}
 variable "aws_region" {}
 
@@ -27,7 +31,7 @@ data terraform_remote_state "sg" {
 resource "aws_security_group_rule" "grpc_ingress" {
   type = "ingress"
   security_group_id = data.terraform_remote_state.sg.outputs.grpc_security_group_id
-  cidr_blocks = [{% for i in ip_list %}"{{ i }}/32"{{ "," if not loop.last }}{% endfor %}]
+  cidr_blocks = ["20.20.1.254/32","20.20.1.210/32","20.20.1.212/32","20.20.1.20/32","20.20.1.19/32"]
   from_port = 7100
   to_port = 7100
   protocol = "tcp"

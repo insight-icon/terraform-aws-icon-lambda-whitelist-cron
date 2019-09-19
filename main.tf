@@ -40,7 +40,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_check_foo" {
   source_arn = aws_cloudwatch_event_rule.this.arn
 }
 
-resource "aws_iam_policy" "this" {
+resource "aws_iam_policy" "cloudwatch" {
   name = "${var.name}-logging-lambda"
   path = "/"
   description = ""
@@ -89,6 +89,17 @@ data "template_file" "dynamodb_locktable_role_policy" {
   }
 }
 
+data "template_file" "security_group_edit_role_policy" {
+  template = file("${path.module}/policies/security-group-edit-role-policy.json")
+  vars = {
+//    name = var.name
+    vpc_id = var.vpc_id
+    account_id = data.aws_caller_identity.this.account_id
+    region = data.aws_region.this.name
+    sg_id = var.grpc_security_group_id
+  }
+}
+
 resource "aws_iam_role_policy" "cloudwatch_policy" {
   role = aws_iam_role.this.id
   policy = data.template_file.cloudwatch_policy.rendered
@@ -104,10 +115,14 @@ resource "aws_iam_role_policy" "dynamodb_locktable_role_policy" {
   policy = data.template_file.dynamodb_locktable_role_policy.rendered
 }
 
+resource "aws_iam_role_policy" "security_group_edit_role_policy" {
+  role = aws_iam_role.this.id
+  policy = data.template_file.security_group_edit_role_policy.rendered
+}
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role = aws_iam_role.this.name
-  policy_arn = aws_iam_policy.this.arn
+  policy_arn = aws_iam_policy.cloudwatch.arn
 }
 
 resource "aws_iam_role_policy_attachment" "vpc_policy" {

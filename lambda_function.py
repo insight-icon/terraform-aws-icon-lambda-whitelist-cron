@@ -17,15 +17,17 @@ def lambda_handler(event, context):
     logger.info('## CONTEXT')
     logger.info(context)
 
+    TERRAFORM_VERSION = "0.12.9"
+
     try:
         logger.info('Downloading terraform')
-        r = requests.get('https://releases.hashicorp.com/terraform/0.12.6/terraform_0.12.6_linux_amd64.zip')
-        with open('/tmp/terraform_0.12.6_linux_amd64.zip', 'wb') as terrazip:
+        r = requests.get('https://releases.hashicorp.com/terraform/' + TERRAFORM_VERSION + '/terraform_' + TERRAFORM_VERSION + '_linux_amd64.zip')
+        with open('/tmp/terraform_' + TERRAFORM_VERSION + '_linux_amd64.zip', 'wb') as terrazip:
             terrazip.write(r.content)
-        print('downloaded')
-        with zipfile.ZipFile('/tmp/terraform_0.12.6_linux_amd64.zip', 'r') as zip_ref:
+        logger.info('Downloaded ' + TERRAFORM_VERSION)
+        with zipfile.ZipFile('/tmp/terraform_' + TERRAFORM_VERSION + '_linux_amd64.zip', 'r') as zip_ref:
             zip_ref.extractall('/tmp/')
-
+        logger.info('Unzipped')
         logger.info('Downloading whitelist')
         whitelist_url = r'https://download.solidwallet.io/conf/prep_iplist.json'
         logger.info('## URL')
@@ -47,12 +49,31 @@ def lambda_handler(event, context):
         os.chmod('/tmp/terraform', 755)
         subprocess.call(['./terraform',
                          'init',
+                         # '--backend-config "bucket=$TF_VAR_terraform_state_bucket"',
+                         # '--backend-config "dynamodb_table=$TF_VAR_lock_table"',
+                         # '--backend-config "region=$TF_VAR_aws_region"',
+                         # '--backend-config "key=$TF_VAR_key"',
+                         # '--backend-config "encrypt=true"'
+                         ], cwd='/tmp/')
+
+        # This is the first command that should be run for any new or existing
+        # Terraform configuration per machine. This sets up all the local data
+        # necessary to run Terraform that is typically not committed to version
+        # control.
+        # This command is always safe to run multiple times. Though subsequent runs
+        # may give errors, this command will never delete your configuration or
+        # state. Even so, if you have important information, please back it up prior
+        # to running this command, just in case.
+
+        subprocess.call(['./terraform',
+                         'init',
                          '--backend-config "bucket=$TF_VAR_terraform_state_bucket"',
                          '--backend-config "dynamodb_table=$TF_VAR_lock_table"',
                          '--backend-config "region=$TF_VAR_aws_region"',
-                         '--backend-config "key=$TF_VAR_key'
+                         '--backend-config "key=$TF_VAR_key"',
+                         '--backend-config "encrypt=true"'
                          ], cwd='/tmp/')
-        # subprocess.call(['./terraform', 'init'], cwd='/tmp/') # This could have been artifact of perms but whatever can't , wait, it can hurt
+
         subprocess.call(['./terraform', 'apply', '--auto-approve'], cwd='/tmp/')
 
         logger.info(subprocess.call(['./terraform', 'output', '--auto-approve'], cwd='/tmp/'))

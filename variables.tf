@@ -18,3 +18,11 @@ variable "subnet_ids" {
 variable "security_group_ids" {
   type = "list"
 }
+
+variable "vpc_id" {
+  type = string
+}
+
+variable "grpc_security_group_id" {
+  type = string
+}
